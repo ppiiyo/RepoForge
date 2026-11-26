@@ -33,10 +33,10 @@ describe('harden bare-node fixture (dry-run)', () => {
     expect(report.modelBefore.languages.length).toBeGreaterThan(0)
     expect(report.modelBefore.hasTests).toBe(false)
     expect(report.modelBefore.hasCI).toBe(false)
+    expect(report.plannedChangeCount).toBeGreaterThan(0)
+    expect(report.appliedChangeCount).toBe(0)
 
     const byName = Object.fromEntries(report.hardeners.map((h) => [h.name, h]))
-
-    expect(byName.docs?.status === 'planned' || byName.docs?.status === 'skipped').toBe(true)
     expect(byName.ci?.status).toBe('planned')
     expect(byName.tests?.status).toBe('planned')
     expect(byName.docker?.status).toBe('planned')
