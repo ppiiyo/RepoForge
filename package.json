@@ -1,6 +1,6 @@
 {
   "name": "repoforge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Production-grade repository hardening engine. Turns any repo into a production-ready project with tests, CI, security, docs and verifiable quality.",
   "type": "module",
   "main": "./dist/index.js",
@@ -8,15 +8,27 @@
   "bin": {
     "repoforge": "./dist/cli/index.js"
   },
+  "files": [
+    "dist",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ppiiyo/RepoForge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ppiiyo/RepoForge/issues"
+  },
+  "homepage": "https://github.com/ppiiyo/RepoForge#readme",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli/index.ts",
+    "start": "node dist/cli/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint src --ext .ts",
-    "typecheck": "tsc --noEmit",
-    "prepare": "npm run build"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "repository",
@@ -26,7 +38,9 @@
     "security",
     "documentation",
     "production-ready",
-    "code-quality"
+    "code-quality",
+    "github-actions",
+    "docker"
   ],
   "license": "MIT",
   "engines": {

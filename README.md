@@ -2,83 +2,39 @@
 
 **Production-grade repository hardening engine.**
 
-RepoForge turns any repository into a production-ready project — with tests, CI, security baseline, documentation and a verifiable quality score.
+Turns any repository into something you can ship: CI, tests, Docker, docs, and a security baseline — with dry-run, validation, rollback, and optional PR mode.
 
-It is designed as a **reference system**: deterministic analysis first, safe application of changes, self-validation, and clear before/after reporting.
+## Features (v0.2)
 
-> Not a linter. Not a simple generator. A hardening engine with safety guarantees.
+| Capability | Detail |
+|------------|--------|
+| **Analyze** | Languages, frameworks, tests, CI, Docker, docs, secrets (paths only), quality score 0–100 |
+| **Hardeners** | docs · CI (Node/Python/Go) · tests (vitest/jest/pytest) · Docker · security |
+| **Safety** | Dry-run by default · protected files · path guards · temp simulation · git snapshot + rollback |
+| **PR mode** | `--pr` → branch → apply → commit → push → `gh pr create` |
+| **Idempotency** | Second pass reports whether the tree is stable |
+| **Reports** | Terminal + Markdown + JSON |
 
----
-
-## Status
-
-**v0.1.0 — Foundation (active)**
-
-- [x] Core engine pipeline (analyze → plan → safety → apply → verify)
-- [x] ProjectModel (structured repository understanding)
-- [x] Hardener contract + validation
-- [x] Safety layer (path protection, risk gates)
-- [x] DocsHardener
-- [x] CIHardener
-- [x] TestsHardener
-- [x] DockerHardener
-- [x] SecurityHardener
-- [x] CLI (`analyze`, `harden`)
-- [x] Git snapshot before apply + rollback hook
-- [x] Temp-copy simulation before accept
-- [x] Secret pattern scan (paths + light content heuristics)
-- [x] Agensi SKILL.md packaging
-- [x] Golden fixture + integration test (bare-node)
-- [ ] Broader language support in Tests/Docker hardeners
-- [ ] Outdated dependency version resolution
-
----
-
-## Quick Start
+## Quick start
 
 ```bash
-# Install dependencies
+git clone https://github.com/ppiiyo/RepoForge.git
+cd RepoForge
 npm install
-
-# Build
-npm run build
-
-# Analyze any repository
 npx tsx src/cli/index.ts analyze /path/to/repo
-
-# Dry-run hardening (default — no writes)
 npx tsx src/cli/index.ts harden /path/to/repo
-
-# Actually apply changes
 npx tsx src/cli/index.ts harden /path/to/repo --apply
-
-# Write Markdown report
+npx tsx src/cli/index.ts harden /path/to/repo --pr
 npx tsx src/cli/index.ts harden /path/to/repo --report report.md
 ```
 
----
+## Safety contract
 
-## Design Principles
-
-1. **Never break a repository** — dry-run by default, validation, rollback hooks
-2. **Deterministic core** — stack detection and gap analysis do not depend on LLM
-3. **Explain every change** — each file change carries a reason
-4. **Idempotent** — re-running on an already hardened repo is safe
-5. **Modular Hardeners** — new capabilities = new modules, not core rewrites
-
-See [docs/architecture.md](./docs/architecture.md) and [docs/concept.md](./docs/concept.md).
-
----
-
-## Architecture (short)
-
-```
-Ingestion → Analyzer → Planner → Hardener Engine → Safety Layer → Apply → Verify → Report
-```
-
-Each Hardener implements a strict contract (`supports` → `analyze` → `plan` → `apply` → `validate`).
-
----
+1. Never modifies `.env*`, keys, PEM, credential JSON
+2. Never writes outside the repo root
+3. Never touches `.git/` internals
+4. Prefers skip over overwrite for existing CI/Docker/tests
+5. On validation failure → rollback
 
 ## License
 

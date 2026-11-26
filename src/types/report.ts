@@ -29,4 +29,9 @@ export interface RepoForgeReport {
   summary: string
   diagnostics: string[]
   fatalErrors: string[]
+  plannedChangeCount: number
+  appliedChangeCount: number
+  idempotent?: boolean
+  prBranch?: string
+  prUrl?: string
 }
