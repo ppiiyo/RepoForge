@@ -20,6 +20,13 @@ export function renderMarkdownReport(report: RepoForgeReport): string {
   if (report.qualityScoreAfter != null) {
     lines.push(`| Quality (after) | **${report.qualityScoreAfter}/100** |`)
   }
+  lines.push(`| Planned changes | ${report.plannedChangeCount} |`)
+  lines.push(`| Applied changes | ${report.appliedChangeCount} |`)
+  if (report.idempotent != null) {
+    lines.push(`| Idempotent | ${report.idempotent ? 'yes' : 'no'} |`)
+  }
+  if (report.prBranch) lines.push(`| PR branch | \`${report.prBranch}\` |`)
+  if (report.prUrl) lines.push(`| PR | ${report.prUrl} |`)
   lines.push('')
   lines.push(`## Summary`)
   lines.push('')
@@ -42,16 +49,9 @@ export function renderMarkdownReport(report: RepoForgeReport): string {
     lines.push(`## Issues detected`)
     lines.push('')
     for (const issue of m.issues) {
-      lines.push(`- **[${issue.severity}]** ${issue.message}${issue.recommendation ? ` — _${issue.recommendation}_` : ''}`)
-    }
-    lines.push('')
-  }
-
-  if (m.security.hasSecretsInCode && m.security.secretsFindings.length) {
-    lines.push(`## Possible secrets (paths only)`)
-    lines.push('')
-    for (const p of m.security.secretsFindings) {
-      lines.push(`- \`${p}\``)
+      lines.push(
+        `- **[${issue.severity}]** ${issue.message}${issue.recommendation ? ` — _${issue.recommendation}_` : ''}`
+      )
     }
     lines.push('')
   }
@@ -60,9 +60,13 @@ export function renderMarkdownReport(report: RepoForgeReport): string {
   lines.push('')
   for (const h of report.hardeners) {
     const icon =
-      h.status === 'applied' ? '✅' :
-      h.status === 'planned' ? '🟡' :
-      h.status === 'failed' || h.status === 'rolled_back' ? '❌' : '⚪'
+      h.status === 'applied'
+        ? '✅'
+        : h.status === 'planned'
+          ? '🟡'
+          : h.status === 'failed' || h.status === 'rolled_back'
+            ? '❌'
+            : '⚪'
     lines.push(`### ${icon} ${h.name} — \`${h.status}\``)
     if (h.findingsSummary) lines.push(`\n${h.findingsSummary}\n`)
     if (h.plan?.changes?.length) {
@@ -72,29 +76,12 @@ export function renderMarkdownReport(report: RepoForgeReport): string {
       }
       lines.push('')
     }
-    if (h.validation?.errors?.length) {
-      lines.push(`Errors:`)
-      for (const e of h.validation.errors) lines.push(`- ${e}`)
-      lines.push('')
-    }
-    if (h.validation?.warnings?.length) {
-      lines.push(`Warnings:`)
-      for (const w of h.validation.warnings) lines.push(`- ${w}`)
-      lines.push('')
-    }
   }
 
   if (report.diagnostics.length) {
     lines.push(`## Diagnostics`)
     lines.push('')
     for (const d of report.diagnostics) lines.push(`- ${d}`)
-    lines.push('')
-  }
-
-  if (report.fatalErrors.length) {
-    lines.push(`## Fatal errors`)
-    lines.push('')
-    for (const e of report.fatalErrors) lines.push(`- ${e}`)
     lines.push('')
   }
 
