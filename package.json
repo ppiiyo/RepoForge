@@ -5,22 +5,48 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": { "repoforge": "./dist/cli/index.js" },
-  "files": ["dist", "SKILL.md", "README.md", "LICENSE", "CHANGELOG.md", "SECURITY.md"],
-  "repository": { "type": "git", "url": "git+https://github.com/ppiiyo/RepoForge.git" },
-  "bugs": { "url": "https://github.com/ppiiyo/RepoForge/issues" },
+  "bin": {
+    "repoforge": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "SKILL.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ppiiyo/RepoForge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ppiiyo/RepoForge/issues"
+  },
   "homepage": "https://github.com/ppiiyo/RepoForge#readme",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli/index.ts",
     "start": "node dist/cli/index.js",
-    "test": "vitest run",
+    "test": "node --experimental-strip-types --experimental-loader ./scripts/ts-resolve.mjs scripts/smoke-test.mjs",
+    "test:vitest": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["repository", "hardening", "ci", "testing", "security", "docker", "github-actions", "devops"],
+  "keywords": [
+    "repository",
+    "hardening",
+    "ci",
+    "testing",
+    "security",
+    "docker",
+    "github-actions",
+    "devops"
+  ],
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "tsx": "^4.19.2",
