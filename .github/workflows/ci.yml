@@ -11,22 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci
           else npm install
           fi
+
+      - name: Smoke tests
+        run: npm test
+
       - name: Typecheck
         run: npm run typecheck
-      - name: Test
-        run: npm test
+
       - name: Build
         run: npm run build
