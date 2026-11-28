@@ -34,7 +34,10 @@ export interface EngineDependencies {
 }
 
 export class RepoForgeEngine {
-  constructor(private readonly deps: EngineDependencies) {}
+  private readonly deps: EngineDependencies
+  constructor(deps: EngineDependencies) {
+    this.deps = deps
+  }
 
   async run(rootDir: string, options: EngineOptions = {}): Promise<RepoForgeReport> {
     const runId = randomUUID()
