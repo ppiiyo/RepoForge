@@ -92,7 +92,7 @@ export class SecurityHardener implements Hardener {
   readonly description =
     'Adds Dependabot, SECURITY.md and strengthens .gitignore against common secret leaks'
 
-  supports(project: ProjectModel): boolean {
+  supports(_project: ProjectModel): boolean {
     return true
   }
 
@@ -102,10 +102,12 @@ export class SecurityHardener implements Hardener {
     if (!project.security.hasSecurityMd) missing.push('SECURITY.md')
     missing.push('gitignore-secrets')
 
+    const coreMissing = missing.filter((m) => m !== 'gitignore-secrets')
     return {
-      summary: missing.includes('dependabot') || missing.includes('SECURITY.md')
-        ? `Security gaps: ${missing.filter((m) => m !== 'gitignore-secrets').join(', ') || 'baseline improvements'}`
-        : 'Core security files present — will strengthen .gitignore',
+      summary:
+        coreMissing.length > 0
+          ? `Security gaps: ${coreMissing.join(', ')}`
+          : 'Core security files present — checking .gitignore baseline',
       details: {
         hasDependabot: project.security.hasDependabot,
         hasSecurityMd: project.security.hasSecurityMd,
@@ -138,15 +140,29 @@ export class SecurityHardener implements Hardener {
       })
     }
 
-    changes.push({
-      path: '.gitignore',
-      content: '',
-      reason: 'Strengthen .gitignore against common secret and credential patterns',
-    })
+    let needsGitignore = true
+    try {
+      const existing = await fs.readFile(path.join(project.rootDir, '.gitignore'), 'utf8')
+      if (existing.includes('RepoForge security baseline')) {
+        needsGitignore = false
+      }
+    } catch {
+      // missing file
+    }
+    if (needsGitignore) {
+      changes.push({
+        path: '.gitignore',
+        content: '',
+        reason: 'Strengthen .gitignore against common secret and credential patterns',
+      })
+    }
 
     return {
       hardenerName: this.name,
-      description: 'Apply security baseline (Dependabot, SECURITY.md, .gitignore)',
+      description:
+        changes.length === 0
+          ? 'Security baseline already satisfied'
+          : 'Apply security baseline (Dependabot, SECURITY.md, .gitignore)',
       changes,
       risk: 'low',
       requiresConfirmation: false,
