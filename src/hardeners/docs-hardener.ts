@@ -100,7 +100,7 @@ export class DocsHardener implements Hardener {
   readonly name = 'docs'
   readonly description = 'Ensures README, SECURITY.md and CONTRIBUTING.md exist with a solid baseline'
 
-  supports(project: ProjectModel): boolean {
+  supports(_project: ProjectModel): boolean {
     return true
   }
 
