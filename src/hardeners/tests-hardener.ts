@@ -54,7 +54,7 @@ export default defineConfig({
 `
 }
 
-function buildSmokeTest(model: ProjectModel): string {
+function buildSmokeTest(_model: ProjectModel): string {
   return `import { describe, it, expect } from 'vitest'
 
 describe('smoke', () => {
